@@ -1,6 +1,7 @@
 ﻿using RandomNameGeneratorLibrary;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace NameGenerator
@@ -8,6 +9,31 @@ namespace NameGenerator
     class Program
     {
         public static void Main(string[] args)
+        {
+            List<Person> randomPersonList = new List<Person>();
+            List<Observation> randomObservationList = new List<Observation>();
+            Observation observation = new Observation();
+
+            randomPersonList = NameGenerator();
+            
+            Console.WriteLine("How many fake observations do you want to make?");
+            string num = Console.ReadLine();
+
+            int count = 0;
+            foreach (var p in randomPersonList)
+            {
+                observation = DarwinGenerator(p.Mrn);
+                randomObservationList.Add(observation);
+
+                count++;
+                if(count >= Convert.ToInt32(num))
+                    break;
+            }
+
+            DarwinToCsv(randomObservationList);
+        }
+
+        public static List<Person> NameGenerator()
         {
             List<Person> randomPersonList = new List<Person>();
             Person newPerson = new Person();
@@ -25,36 +51,78 @@ namespace NameGenerator
             for (int i = 0; i < Convert.ToInt32(num); i++)
             {
                 personGenerator = new PersonNameGenerator();
-                newPerson.Center = centers[rand.Next(0, centers.Length)]; ;
+                newPerson.Center = SelectRandomStringFromList(rand, centers);
                 newPerson.FirstName = personGenerator.GenerateRandomFirstName();
                 newPerson.LastName = personGenerator.GenerateRandomLastName();
                 newPerson.Gender = genders[rand.Next(0, genders.Length)];
-                newPerson.EthnicityCode = ethnicities[rand.Next(0, ethnicities.Length)];
-                newPerson.Race = RandomRace(races, races2);
-                newPerson.DOB = RandomDOB();
-                newPerson.NmdpId = RandomNMDP();
-                newPerson.Mrn = RandomMRN();
+                newPerson.EthnicityCode = SelectRandomStringFromList(rand, ethnicities);
+                newPerson.Race = RandomRace(races, races2, rand);
+                newPerson.DOB = RandomDOB(rand);
+                newPerson.NmdpId = RandomNMDP(rand);
+                newPerson.Mrn = RandomMRN(rand);
 
                 randomPersonList.Add(newPerson);
                 newPerson = new Person();
             }
 
-            ToCsv(randomPersonList);
+            NameToCsv(randomPersonList);
+
+            return randomPersonList;
         }
 
-        public static string RandomDOB()
+        public static Observation DarwinGenerator(string mrn)
         {
+            Observation newObservation = new Observation();
             Random rand = new Random();
+
+            string[] ptName = new string[] { "Kernan, Nancy", "Cheung, Nai-Kong", "Kushner, Brian", "O'Reilly, Richard", "Boulad, Farid",
+                                            "Dunkel, Ira", "Kramer, Kim", "Khakoo, Yasmin", "Modak, Shakeel I.", "Prockop, Susan",
+                                            "Scaradavou, Andromachi", "Gilheeney, Stephen", "Kobos, Rachel", "De Braganca, Kevin",
+                                            "Basu, Ellen", "Hasan, Aisha", "Curran, Kevin", "Roberts, Stephen", "Spitzer, Barbara",
+                                            "Shukla, Neerav", "Cancio, Maria", "Forlenza, Christopher", "Jackson, Carolyn", "Raju, Praveen",
+                                            "Kung, Andrew", "Karajannis, Matthias", "Boelens, Jaap Jan",  "Oved, Joseph" };
+
+            string[] service = new string[] { "Pediatrics - Blue Team", "Intensive Care B", "Neuroblastoma" };
+            string[] cellInfusionType = new string[] { "Transplant - Allogenic progenitor cells", "Autologous progenitor cells", 
+                                                       "Autologous peripheral blood lymphocytes", "Allogenic peripheral blood lymphocytes" };
+            string[] cellSource = new string[] { "Cord Blood", "Bone Marrow", "Peripheral Blood", "Chimeric Antigen Receptor (CAR)", "Cytotoxic T Cell (CTL)", "Donor Lymphocyte Infusion (DLI)"};
+            string[] donor = new string[] { "related", "unrelated" };
+
+            newObservation.Mrn = mrn;
+            newObservation.PTName = SelectRandomStringFromList(rand, ptName);
+            newObservation.ServiceDate = RandomServiceDate(rand);
+            newObservation.Service = SelectRandomStringFromList(rand, service);
+            newObservation.CellInfusionType = SelectRandomStringFromList(rand, cellInfusionType);
+            newObservation.CellSource = SelectRandomStringFromList(rand, cellSource);
+            newObservation.Donor = SelectRandomStringFromList(rand, donor);
+
+            return newObservation;
+        }
+
+        public static string SelectRandomStringFromList(Random rand, string[] sList)
+        {
+            return sList[rand.Next(0, sList.Length)];
+        }
+
+        public static string RandomDOB(Random rand)
+        {
             DateTime start = new DateTime(1940, 1, 1);
             DateTime end = new DateTime(2000, 1, 1);
             int range = (end - start).Days;
             return start.AddDays(rand.Next(range)).ToString("MM/dd/yyyy");
         }
 
-        public static string[] RandomRace(string[] race1, string[] race2)
+        public static string RandomServiceDate(Random rand)
         {
-            Random rand = new Random();
-            string[] races = new string[] { "" , "" };
+            DateTime start = new DateTime(2021, 1, 1);
+            DateTime end = new DateTime(2021, 7, 31);
+            int range = (end - start).Days;
+            return start.AddDays(rand.Next(range)).ToString("MM/dd/yyyy");
+        }
+
+        public static string[] RandomRace(string[] race1, string[] race2, Random rand)
+        {
+            string[] races = new string[2];
 
             races[0] = race1[rand.Next(0, race1.Length)];
 
@@ -73,10 +141,8 @@ namespace NameGenerator
             return races;
         }
 
-        public static string RandomMRN()
+        public static string RandomMRN(Random rand)
         {
-            Random rand = new Random();
-
             const string allowedFirstCharacter = "3";
             char[] firstChars = new char[allowedFirstCharacter.Length];
 
@@ -94,10 +160,8 @@ namespace NameGenerator
             return new string(chars);
         }
 
-        public static string RandomNMDP()
-        { 
-            Random rand = new Random();
-            
+        public static string RandomNMDP(Random rand)
+        {             
             string result = "";
             int number = rand.Next(0, 100);
             if (number <= 10)
@@ -114,9 +178,10 @@ namespace NameGenerator
 
         }
 
-        public static void ToCsv(List<Person> pList)
+        public static void NameToCsv(List<Person> pList)
         {
-            string file = ("E:\\projects\\NameGenerator\\NameGenerator\\Dataset.csv");
+            string file = "..\\Data\\FakePHI.csv";
+
             string newLine = "";
             System.IO.File.WriteAllText(file, String.Empty);
             newLine = "Center" + "," + "FirstName" + "," + "LastName" + "," + "Gender" + "," + "DateOfBirth" + ","
@@ -140,7 +205,25 @@ namespace NameGenerator
 
             }
         }
-            
+
+        public static void DarwinToCsv(List<Observation> oList)
+        {
+            string file = "..\\Data\\FakeDarwin.csv";
+
+            string newLine = "";
+            System.IO.File.WriteAllText(file, String.Empty);
+            newLine = "Mrn" + "," + "PT Name" + "," + "Service Date" + "," + "Service" + "," + "Cell Infusion Type" + ","
+                + "Cell Source" + "," + "Donor" + Environment.NewLine;
+            System.IO.File.AppendAllText(file, newLine);
+
+            foreach (var o in oList)
+            {
+                newLine = o.Mrn + ",\"" + o.PTName + "\"," + o.ServiceDate + "," + o.Service + "," + o.CellInfusionType + ","
+                    + o.CellSource + "," + o.Donor + Environment.NewLine;
+                System.IO.File.AppendAllText(file, newLine);
+            }
+        }
+
 
     }
 }

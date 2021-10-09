@@ -16,9 +16,7 @@ namespace NameGenerator
         public string DOB { get; set; }
         public string EthnicityCode { get; set; }
         public string[] Race { get; set; }
-
         public string NmdpId { get; set; }
-
         public string Mrn { get; set; }
     }
 }
