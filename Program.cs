@@ -14,7 +14,7 @@ namespace NameGenerator
             List<Observation> randomObservationList = new List<Observation>();
             Observation observation = new Observation();
 
-            randomPersonList = NameGenerator();
+            randomPersonList = NameGenerator(randomPersonList);
             
             Console.WriteLine("How many fake observations do you want to make?");
             string num = Console.ReadLine();
@@ -30,12 +30,12 @@ namespace NameGenerator
                     break;
             }
 
+            NameToCsv(randomPersonList);
             DarwinToCsv(randomObservationList);
         }
 
-        public static List<Person> NameGenerator()
+        public static List<Person> NameGenerator(List<Person> personList)
         {
-            List<Person> randomPersonList = new List<Person>();
             Person newPerson = new Person();
             var personGenerator = new PersonNameGenerator();
             Random rand = new Random();
@@ -61,13 +61,11 @@ namespace NameGenerator
                 newPerson.NmdpId = RandomNMDP(rand);
                 newPerson.Mrn = RandomMRN(rand);
 
-                randomPersonList.Add(newPerson);
+                personList.Add(newPerson);
                 newPerson = new Person();
             }
 
-            NameToCsv(randomPersonList);
-
-            return randomPersonList;
+            return personList;
         }
 
         public static Observation DarwinGenerator(string mrn)
@@ -150,12 +148,12 @@ namespace NameGenerator
             const string allowedChars = "0123456789";
             char[] chars = new char[stringLength];
 
-            chars[0] = allowedFirstCharacter[rand.Next(0, allowedFirstCharacter.Length)];
+            chars[0] = SelectRandomStringFromList(rand, allowedFirstCharacter);
 
 
             for (int i = 1; i < stringLength; i++)
             {
-                chars[i] = allowedChars[rand.Next(0, allowedChars.Length)];
+                chars[i] = SelectRandomStringFromList(rand, allowedChars);
             }
             return new string(chars);
         }
@@ -184,22 +182,19 @@ namespace NameGenerator
 
             string newLine = "";
             System.IO.File.WriteAllText(file, String.Empty);
-            newLine = "Center" + "," + "FirstName" + "," + "LastName" + "," + "Gender" + "," + "DateOfBirth" + ","
-                + "EthnicityCode" + "," + "Race" + "," + "NmdpId" + "," + "Mrn" + Environment.NewLine;
+            newLine = "Center, FirstName, LastName, Gender, DateOfBirth, EthnicityCode, Race, NmdpId, Mrn" + Environment.NewLine;
             System.IO.File.AppendAllText(file, newLine);
 
             foreach (var p in pList)
             {
                 if(p.Race[1] == "")
                 {
-                    newLine = p.Center + "," + p.FirstName + "," + p.LastName + "," + p.Gender + "," + p.DOB + ","
-                        + p.EthnicityCode + "," + p.Race[0] + "," + p.NmdpId + "," + p.Mrn + Environment.NewLine;
+                    newLine = ($"{p.Center}, {p.FirstName}, {p.LastName}, {p.Gender}, {p.DOB}, {p.EthnicityCode}, {p.Race[0]}, {p.NmdpId}, {p.Mrn}" + Environment.NewLine);
                     System.IO.File.AppendAllText(file, newLine);
                 }
                 else
                 {
-                    newLine = p.Center + "," + p.FirstName + "," + p.LastName + "," + p.Gender + "," + p.DOB + ","
-                        + p.EthnicityCode + "," + p.Race[0] + ";" + p.Race[1] + "," + p.NmdpId + "," + p.Mrn + Environment.NewLine;
+                    newLine = ($"{p.Center}, {p.FirstName}, {p.LastName}, {p.Gender}, {p.DOB}, {p.EthnicityCode}, {p.Race[0]};{p.Race[1]}, {p.NmdpId}, {p.Mrn}") + Environment.NewLine;
                     System.IO.File.AppendAllText(file, newLine);
                 }
 
@@ -212,14 +207,12 @@ namespace NameGenerator
 
             string newLine = "";
             System.IO.File.WriteAllText(file, String.Empty);
-            newLine = "Mrn" + "," + "PT Name" + "," + "Service Date" + "," + "Service" + "," + "Cell Infusion Type" + ","
-                + "Cell Source" + "," + "Donor" + Environment.NewLine;
+            newLine = "Mrn, PT Name, Service Date, Service, Cell Infusion Type, Cell Source, Donor" + Environment.NewLine;
             System.IO.File.AppendAllText(file, newLine);
 
             foreach (var o in oList)
             {
-                newLine = o.Mrn + ",\"" + o.PTName + "\"," + o.ServiceDate + "," + o.Service + "," + o.CellInfusionType + ","
-                    + o.CellSource + "," + o.Donor + Environment.NewLine;
+                newLine = ($"{o.Mrn},\"{o.PTName}\", {o.ServiceDate}, {o.Service}, {o.CellInfusionType}, {o.CellSource}, {o.Donor}") + Environment.NewLine;
                 System.IO.File.AppendAllText(file, newLine);
             }
         }
