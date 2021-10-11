@@ -45,6 +45,7 @@ namespace NameGenerator
             string[] ethnicities = new string[] { "2135-2", "2186-5" };
             string[] races = new string[] { "1002-5", "2028-9", "2054-5", "2076-8", "2106-3", "ASKU" };
             string[] races2 = new string[] { "1002-5", "2028-9", "2054-5", "2076-8", "2106-3" };
+            
             Console.WriteLine("How many fake people do you want to make?");
             string num = Console.ReadLine();
 
@@ -73,17 +74,18 @@ namespace NameGenerator
             Observation newObservation = new Observation();
             Random rand = new Random();
 
-            string[] ptName = new string[] { "Kernan, Nancy", "Cheung, Nai-Kong", "Kushner, Brian", "O'Reilly, Richard", "Boulad, Farid",
-                                            "Dunkel, Ira", "Kramer, Kim", "Khakoo, Yasmin", "Modak, Shakeel I.", "Prockop, Susan",
-                                            "Scaradavou, Andromachi", "Gilheeney, Stephen", "Kobos, Rachel", "De Braganca, Kevin",
-                                            "Basu, Ellen", "Hasan, Aisha", "Curran, Kevin", "Roberts, Stephen", "Spitzer, Barbara",
-                                            "Shukla, Neerav", "Cancio, Maria", "Forlenza, Christopher", "Jackson, Carolyn", "Raju, Praveen",
-                                            "Kung, Andrew", "Karajannis, Matthias", "Boelens, Jaap Jan",  "Oved, Joseph" };
-
+            string[] ptName = new string[] { 
+                "Kernan, Nancy", "Cheung, Nai-Kong", "Kushner, Brian", "O'Reilly, Richard", "Boulad, Farid",
+                "Dunkel, Ira", "Kramer, Kim", "Khakoo, Yasmin", "Modak, Shakeel I.", "Prockop, Susan",
+                "Scaradavou, Andromachi", "Gilheeney, Stephen", "Kobos, Rachel", "De Braganca, Kevin",
+                "Basu, Ellen", "Hasan, Aisha", "Curran, Kevin", "Roberts, Stephen", "Spitzer, Barbara",
+                "Shukla, Neerav", "Cancio, Maria", "Forlenza, Christopher", "Jackson, Carolyn", "Raju, Praveen",
+                "Kung, Andrew", "Karajannis, Matthias", "Boelens, Jaap Jan",  "Oved, Joseph" };
             string[] service = new string[] { "Pediatrics - Blue Team", "Intensive Care B", "Neuroblastoma" };
             string[] cellInfusionType = new string[] { "Transplant - Allogenic progenitor cells", "Autologous progenitor cells", 
                                                        "Autologous peripheral blood lymphocytes", "Allogenic peripheral blood lymphocytes" };
-            string[] cellSource = new string[] { "Cord Blood", "Bone Marrow", "Peripheral Blood", "Chimeric Antigen Receptor (CAR)", "Cytotoxic T Cell (CTL)", "Donor Lymphocyte Infusion (DLI)"};
+            string[] cellSource = new string[] { "Cord Blood", "Bone Marrow", "Peripheral Blood", "Chimeric Antigen Receptor (CAR)",
+                                                 "Cytotoxic T Cell (CTL)", "Donor Lymphocyte Infusion (DLI)"};
             string[] donor = new string[] { "related", "unrelated" };
 
             newObservation.Mrn = mrn;
